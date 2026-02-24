@@ -1,7 +1,7 @@
 from pymodbus.client import ModbusSerialClient
 import time
 
-client = ModbusSerialClient(
+GPIO_BOX = ModbusSerialClient(
     port="/dev/ttyUSB0",
     baudrate=9600,
     parity="N",
@@ -10,15 +10,18 @@ client = ModbusSerialClient(
     timeout=1
 )
 
-relay=0
+relay=6
 
-print("Connect:", client.connect())
+def on(IO):
+    print("Connect:", GPIO_BOX.connect())
+    print("ON")
+    GPIO_BOX.write_coil(IO, True, device_id=1)
 
-print("Relay ON")
-client.write_coil(relay, True, device_id=1)
+def off(IO):
+    print("OFF")
+    GPIO_BOX.write_coil(IO, False, device_id=1)
+    GPIO_BOX.close()
+
+on(relay)
 time.sleep(2)
-
-print("Relay OFF")
-client.write_coil(relay, False, device_id=1)
-
-client.close()
+off(relay)
